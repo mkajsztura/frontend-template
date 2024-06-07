@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs: 
+      deploy-netlify:
+        description: 'Deploy to Netlify'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -30,6 +37,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to Netlify
+        if: ${{ inputs.deploy-netlify }}
         uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: './dist'
@@ -43,6 +51,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           timeout-minutes: 1
+
       # - name: Deploy to S3
       #   uses: ./.github/actions/aws-s3-sync
       #   with:
